@@ -1,0 +1,70 @@
+/**
+ * 用于介绍项目结构，主要集中在gradle配置
+ */
+
+先看project下：
+
+ 1. .gradle:Gradle编译系统，版本由wrapper指定
+
+ 2. .idea：Android Studio IDE所需要的文件（.gradle和.idea都是自动生成的，无需编辑）
+
+ 3. app下的文件
+    3.1 libs: 依赖的库所在的位置（jar和aar)
+    3.2 src:  源代码所在的目录
+    3.3 src/main: 主要代码所在位置（src/androidTest）就是测试代码所在位置了
+    3.4 src/main/java: 最最重要的，我们的java代码所在的位置
+    3.5 src/main/assets: android中附带的一些文件
+    3.6 src/main/res: android资源文件所在位置
+    3.7 src/main/AndroidManifest.xml: AndroidManifest文件
+    3.8 build.gradle:和这个项目有关的gradle配置，相当于这个项目的Makefile，一些项目的依赖就写在这里面
+    3.7 proguard.pro:代码混淆配置文件
+
+
+ 4. 接着来到了整个项目的配置文件部分
+    4.1 .gradle: wrapper的jar和配置文件所在的位置
+        //打开wrapper看一下
+        distributionBase=GRADLE_USER_HOME
+        distributionUrl=https\://services.gradle.org/distributions/gradle-7.4-bin.zip//===========这里的7.4就是Gradle版本
+        distributionPath=wrapper/dists
+        zipStorePath=wrapper/dists
+        zipStoreBase=GRADLE_USER_HOME
+    4.2 .gitignore: git使用的ignore文件，这个文件是用来将指定的文件和目录排除在版本控制之外
+    4.3 build.gradle: gradle编译的相关插件版本
+        //看一下自动生成的代码
+        plugins {
+            id 'com.android.application' version '7.3.1' apply false //=============这里就是7.3.1就是Gradle的插件版本
+            id 'com.android.library' version '7.3.1' apply false
+            id 'org.jetbrains.kotlin.android' version '1.7.20' apply false
+        }
+    4.4 gradle.properties: gradle相关的全局属性设置
+    4.5 gradlew: *nix下的gradle wrapper可执行文件
+    4.6 graldew.bat: windows下的gradle wrapper可执行文件
+    4.7 local.properties: 本地属性设置（key设置，android sdk位置等属性），这个文件是不推荐上传到VCS中去的
+    4.8 settings.gradle:和设置相关的gradle脚本
+        //重点说一下这个
+            //用于配置Gradle插件的Maven仓库 ,配置的是构建过程中,使用的仓库;
+            pluginManagement {
+                repositories {
+                    gradlePluginPortal()
+                    google()
+                    mavenCentral()
+                }
+            }
+            用于配置依赖的Maven仓库 ,配置的是工程或模块下的依赖使用的仓库 ;
+            dependencyResolutionManagement {
+                //=====RepositoriesMode.PREFER_PROJECT : 解析依赖库时 , 优先使用本地仓库 , 本地仓库没有该依赖 , 则使用远程仓库 ;
+                //=====RepositoriesMode.FAIL_ON_PROJECT_REPOS : 解析依赖库时 , 强行使用远程仓库 , 不管本地仓库有没有该依赖库 ;
+                repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+                repositories {
+                    google()
+                    mavenCentral()
+                }
+            }
+            //=====rootProject.name 用于指定工程根目录 , 在该目录下有一个 build.gradle 构建脚本 , 声明后会自动执行该构建脚本 ;
+            rootProject.name = "profile"
+            //=====include 用于指定子项目 , 在子项目中也有一个 build.gradle 构建脚本 , 声明后会自动执行该构建脚本 ;
+            include ':app'
+
+
+
+//统一配置文件管理多模块下的导包等可以参考这篇文章：https://blog.csdn.net/Snow_Ice_Yang/article/details/129029584
